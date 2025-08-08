@@ -4,6 +4,7 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { supabase } from '@/auth/supabase'
+import { useAuthStore } from '@/stores/auth'
 import { useDashboardStore } from '@/stores/dashboard'
 
 const router = useRouter()
@@ -72,9 +73,11 @@ const statusCounts = computed(() => {
 
 
 
+const authStore = useAuthStore()
+
 async function fetchServers() {
   try {
-    const response = await fetch(`${API_BASE_URL}/servers`)
+    const response = await authStore.authorizedFetch(`${API_BASE_URL}/servers`)
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
     }
@@ -98,7 +101,7 @@ async function fetchMembers() {
 
   try {
     isLoading.value = true
-    const response = await fetch(`${API_BASE_URL}/servers/${(selectedServer.value.id)}/members`)
+    const response = await authStore.authorizedFetch(`${API_BASE_URL}/servers/${(selectedServer.value.id)}/members`)
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
     }
@@ -117,7 +120,7 @@ async function fetchChannels() {
   if (!selectedServer.value) return
 
   try {
-    const response = await fetch(`${API_BASE_URL}/servers/${selectedServer.value.id}/channels`)
+    const response = await authStore.authorizedFetch(`${API_BASE_URL}/servers/${selectedServer.value.id}/channels`)
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
     }
@@ -133,7 +136,7 @@ async function fetchMemberActivity(memberId) {
   if (!selectedServer.value || !memberId) return
   try {
     isLoadingActivity.value = true
-    const response = await fetch(`${API_BASE_URL}/servers/${selectedServer.value.id}/members/${memberId}/activity`)
+    const response = await authStore.authorizedFetch(`${API_BASE_URL}/servers/${selectedServer.value.id}/members/${memberId}/activity`)
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
     memberActivity.value = await response.json()
   } catch (error) {
@@ -218,7 +221,7 @@ async function warnMember(member) {
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}/servers/${selectedServer.value.id}/members/${member.id}/warn?reason=${encodeURIComponent(reason)}`, {
+    const response = await authStore.authorizedFetch(`${API_BASE_URL}/servers/${selectedServer.value.id}/members/${member.id}/warn?reason=${encodeURIComponent(reason)}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -244,7 +247,7 @@ async function banMember(member) {
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}/servers/${selectedServer.value.id}/members/${member.id}/ban?reason=${encodeURIComponent(reason)}`, {
+    const response = await authStore.authorizedFetch(`${API_BASE_URL}/servers/${selectedServer.value.id}/members/${member.id}/ban?reason=${encodeURIComponent(reason)}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

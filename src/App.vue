@@ -1,12 +1,20 @@
 <!-- eslint-disable no-unused-vars -->
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
 
 const router = useRouter()
 const isSidebarOpen = ref(window.innerWidth > 768)
 const isDarkMode = ref(false)
 const isMobile = ref(false)
+
+onMounted(() => {
+  authStore.init()
+})
+
 
 const toggleSidebar = () => {
   isSidebarOpen.value = !isSidebarOpen.value
@@ -37,7 +45,6 @@ const checkScreenSize = () => {
   }
 }
 
-// Add event listeners
 if (typeof window !== 'undefined') {
   window.addEventListener('resize', checkScreenSize)
   checkScreenSize()
@@ -45,7 +52,7 @@ if (typeof window !== 'undefined') {
 </script>
 
 <template>
-  <div class="app-container" :class="{ 'dark-mode': isDarkMode }">
+  <div v-if="authStore.user" class="app-container" :class="{ 'dark-mode': isDarkMode }">
     <div
       v-if="isSidebarOpen"
       class="mobile-overlay"
@@ -88,6 +95,13 @@ if (typeof window !== 'undefined') {
           <span class="nav-text" v-show="isSidebarOpen">{{ item.name }}</span>
         </router-link>
       </nav>
+
+      <div class="sidebar-footer">
+        <button class="btn btn-secondary logout-btn" @click="authStore.signOut">
+          <span class="nav-icon">🚪</span>
+          <span v-show="isSidebarOpen" class="nav-text">Logout</span>
+        </button>
+      </div>
     </aside>
 
     <button
@@ -102,9 +116,56 @@ if (typeof window !== 'undefined') {
       <RouterView />
     </main>
   </div>
+
+  <div v-else class="login-container">
+    <div class="login-card card">
+      <h1>Welcome to Admin Bot</h1>
+      <p>Please log in with Discord to continue.</p>
+      <button class="btn btn-primary" @click="authStore.signInWithDiscord">
+        <span class="nav-icon">💬</span>
+        Login with Discord
+      </button>
+    </div>
+  </div>
 </template>
 
 <style lang="scss">
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+}
+.sidebar-nav {
+  flex-grow: 1;
+}
+.sidebar-footer {
+  padding: var(--spacing-sm);
+  border-top: 1px solid var(--border-color);
+}
+.logout-btn {
+  width: 100%;
+  justify-content: flex-start;
+  padding: var(--spacing-md);
+}
+.login-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: var(--bg-tertiary);
+}
+.login-card {
+  text-align: center;
+  padding: var(--spacing-2xl);
+  max-width: 400px;
+}
+.login-card h1 {
+  margin-bottom: var(--spacing-sm);
+}
+.login-card p {
+  margin-bottom: var(--spacing-lg);
+  color: var(--text-secondary);
+}
 // Modern Color Palette
 :root {
   // Light Mode Colors

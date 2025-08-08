@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { supabase } from '@/auth/supabase'
+import { useAuthStore } from '@/stores/auth'
 
 // API Configuration
 const API_BASE_URL = 'http://127.0.0.1:8000'
@@ -37,8 +38,9 @@ export const useDashboardStore = defineStore('dashboard', () => {
 
   // Actions
   async function fetchServers() {
+    const { authorizedFetch } = useAuthStore()
     try {
-      const response = await fetch(`${API_BASE_URL}/servers`)
+      const response = await authorizedFetch(`${API_BASE_URL}/servers`)
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
@@ -58,11 +60,12 @@ export const useDashboardStore = defineStore('dashboard', () => {
   }
 
   async function fetchMembers() {
+    const { authorizedFetch } = useAuthStore()
     if (!selectedServer.value) return
 
     try {
       isLoading.value = true
-      const response = await fetch(`${API_BASE_URL}/servers/${selectedServer.value.id}/members`)
+      const response = await authorizedFetch(`${API_BASE_URL}/servers/${selectedServer.value.id}/members`)
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
@@ -97,10 +100,11 @@ export const useDashboardStore = defineStore('dashboard', () => {
   }
 
   async function fetchSettings() {
+    const { authorizedFetch } = useAuthStore()
     if (!selectedServer.value) return
 
     try {
-      const response = await fetch(`${API_BASE_URL}/servers/${selectedServer.value.id}/settings`)
+      const response = await authorizedFetch(`${API_BASE_URL}/servers/${selectedServer.value.id}/settings`)
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
@@ -136,10 +140,11 @@ export const useDashboardStore = defineStore('dashboard', () => {
   }
 
   async function saveSettings(newSettings) {
+    const { authorizedFetch } = useAuthStore()
     if (!selectedServer.value) return
 
     try {
-            const response = await fetch(`${API_BASE_URL}/servers/${selectedServer.value.id}/settings`, {
+      const response = await authorizedFetch(`${API_BASE_URL}/servers/${selectedServer.value.id}/settings`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -162,10 +167,11 @@ export const useDashboardStore = defineStore('dashboard', () => {
   }
 
   async function fetchMemberActivity(memberId) {
+    const { authorizedFetch } = useAuthStore()
     if (!selectedServer.value || !memberId) return []
 
     try {
-      const response = await fetch(`${API_BASE_URL}/servers/${selectedServer.value.id}/members/${memberId}/activity`)
+      const response = await authorizedFetch(`${API_BASE_URL}/servers/${selectedServer.value.id}/members/${memberId}/activity`)
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
@@ -179,10 +185,11 @@ export const useDashboardStore = defineStore('dashboard', () => {
 
   // Function to fetch channel members
   async function fetchChannelMembers(channelId) {
+    const { authorizedFetch } = useAuthStore()
     if (!selectedServer.value) return []
 
     try {
-      const response = await fetch(`${API_BASE_URL}/servers/${selectedServer.value.id}/channels/${channelId}/members`)
+      const response = await authorizedFetch(`${API_BASE_URL}/servers/${selectedServer.value.id}/channels/${channelId}/members`)
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
@@ -196,10 +203,11 @@ export const useDashboardStore = defineStore('dashboard', () => {
 
   // Function to fetch channel activity
   async function fetchChannelActivity(channelId) {
+    const { authorizedFetch } = useAuthStore()
     if (!selectedServer.value) return []
 
     try {
-      const response = await fetch(`${API_BASE_URL}/servers/${selectedServer.value.id}/channels/${channelId}/activity`)
+      const response = await authorizedFetch(`${API_BASE_URL}/servers/${selectedServer.value.id}/channels/${channelId}/activity`)
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
