@@ -485,6 +485,7 @@ onUnmounted(() => {
     border-radius: var(--radius-md);
     font-size: 1rem;
     background: var(--bg-surface);
+    color: var(--text-primary);
 
     &:focus {
       outline: none;

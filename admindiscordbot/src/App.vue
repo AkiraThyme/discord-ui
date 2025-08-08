@@ -13,6 +13,7 @@ const isMobile = ref(false)
 
 onMounted(() => {
   authStore.init()
+  // sync from DOM class set in main.js
   isDarkMode.value = document.documentElement.classList.contains('dark-mode')
 })
 
@@ -198,10 +199,6 @@ if (typeof window !== 'undefined') {
   --border-color: #e2e8f0;
   --border-hover: #cbd5e1;
 
-  // Info surfaces (used in some components)
-  --info-color: #0ea5e9;
-  --bg-info: #e0f2fe;
-
   // Shadow
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -251,10 +248,6 @@ if (typeof window !== 'undefined') {
 
   --border-color: #334155;
   --border-hover: #475569;
-
-  // Info surfaces
-  --info-color: #38bdf8;
-  --bg-info: #0b1220;
 }
 
 * {

@@ -1745,8 +1745,8 @@ onUnmounted(() => {
   gap: 2rem;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE 10+ */
-  background: #f9f9fb;
-  border: 1px solid #e5e7eb;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
   padding: 1rem;
 }
 .members-grid::-webkit-scrollbar {

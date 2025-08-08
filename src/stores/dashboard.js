@@ -92,7 +92,19 @@ export const useDashboardStore = defineStore('dashboard', () => {
         throw supabaseError
       }
 
-      reports.value = data || []
+      // Normalize statuses so UI counters work consistently
+      const normalizeStatus = (raw) => {
+        if (!raw) return 'open'
+        const normalized = String(raw).toLowerCase().replace(/[\s-]+/g, '_')
+        return ['open', 'in_progress', 'resolved'].includes(normalized)
+          ? normalized
+          : 'open'
+      }
+
+      reports.value = (data || []).map((r) => ({
+        ...r,
+        status: normalizeStatus(r.status)
+      }))
     } catch (err) {
       error.value = 'Failed to fetch reports.'
       console.error('Error fetching reports:', err)
@@ -127,10 +139,13 @@ export const useDashboardStore = defineStore('dashboard', () => {
         throw supabaseError
       }
 
-      // Update local state
+      // Update local state with normalized value
+      const normalized = String(status).toLowerCase().replace(/[\s-]+/g, '_')
       const report = reports.value.find(r => r.id === reportId)
       if (report) {
-        report.status = status
+        report.status = ['open', 'in_progress', 'resolved'].includes(normalized)
+          ? normalized
+          : 'open'
       }
     } catch (err) {
       error.value = 'Failed to update reports.'
