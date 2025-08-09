@@ -37,7 +37,7 @@ const activeTab = ref('members')
 
 
 // API Configuration
-const API_BASE_URL = 'http://127.0.0.1:8000'
+const API_BASE_URL = 'https://discord-adminbot.onrender.com'
 
 // Real-time subscription for member updates
 let membersSubscription = null
