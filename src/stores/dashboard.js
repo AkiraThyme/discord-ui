@@ -236,7 +236,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
 
   function setupWebSocket() {
     try {
-        websocket.value = new WebSocket('ws://127.0.0.1:8000/ws/status')
+        websocket.value = new WebSocket('wss://discord-adminbot.onrender.com//ws/status')
         websocket.value.onopen = () => {
         console.log('WebSocket connected')
         isConnected    .value = true
