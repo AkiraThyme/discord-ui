@@ -246,6 +246,15 @@ export const useDashboardStore = defineStore('dashboard', () => {
         handleWebSocketMessage(data)
       }
 
+   setInterval(() => {
+        // Make sure the socket is still open before sending
+        if (websocket.value && websocket.value.readyState === WebSocket.OPEN) {
+          // Sending a simple "ping" message
+          websocket.value.send(JSON.stringify({ type: "ping" }));
+        }
+      }, 30000); // Send a ping every 30 seconds
+    };
+
       websocket.value.onclose = () => {
         console.log('WebSocket disconnected')
         isConnected.value = false
