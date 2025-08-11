@@ -585,91 +585,53 @@ onUnmounted(() => {
         <p>Try adjusting your search criteria or status filter.</p>
       </div>
 
-      <div v-else class="members-grid grid grid-3">
-        <div v-for="member in filteredMembers" :key="member.id" class="member-card card glass">
-          <div class="member-header">
+      <div v-else class="members-listview">
+        <div
+          v-for="member in filteredMembers"
+          :key="member.id"
+          class="member-list-item card glass"
+          :class="{ expanded: expandedMember === member.id }"
+          @click="toggleExpand(member.id)"
+        >
+          <div class="member-list-main">
             <div class="member-avatar">
               <img :src="member.avatar_url || '/default-avatar.png'" :alt="member.name"
                 @error="$event.target.src = '/default-avatar.png'" />
               <span class="status-indicator" :class="`status-${member.status}`"></span>
             </div>
-            <div class="member-info">
-              <h3 class="member-name">{{ member.nick || member.name }}</h3>
-              <p v-if="member.nick" class="member-username">@{{ member.name }}</p>
-            </div>
-            <div class="member-status">
-              <span class="status-badge" :class="`status-${member.status}`">
-                {{ member.status }}
+            <div class="member-list-info">
+              <span class="member-list-name">{{ member.nick || member.name }}</span>
+              <span class="member-list-status" :class="`status-${member.status}`">
+                {{ member.status?.toUpperCase() || 'OFFLINE' }}
               </span>
             </div>
+            <span class="expand-arrow">{{ expandedMember === member.id ? '▲' : '▼' }}</span>
           </div>
-
-          <div class="member-details">
-            <div class="detail-item">
-              <span class="detail-label">Roles:</span>
-              <span class="detail-value">{{ member.roles.join(', ') || 'None' }}</span>
+          <transition name="fade">
+            <div v-if="expandedMember === member.id" class="member-list-details">
+              <div class="member-details">
+                <div class="detail-item">
+                  <span class="detail-label">Roles:</span>
+                  <span class="detail-value">{{ member.roles.join(', ') || 'None' }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">User ID:</span>
+                  <span class="detail-value">{{ member.id }}</span>
+                </div>
+              </div>
+              <div class="member-actions">
+                <button class="btn btn-secondary btn-sm" @click.stop="viewMemberHistory(member)">
+                  📊 History
+                </button>
+                <button class="btn btn-warning btn-sm" @click.stop="openWarnModal(member)">
+                  ⚠️ Warn
+                </button>
+                <button class="btn btn-error btn-sm" @click.stop="openBanModal(member)">
+                  🚫 Ban
+                </button>
+              </div>
             </div>
-            <div class="detail-item">
-              <span class="detail-label">User ID:</span>
-              <span class="detail-value">{{ member.id }}</span>
-            </div>
-          </div>
-
-          <div class="member-actions">
-            <button class="btn btn-secondary btn-sm" @click="viewMemberHistory(member)">
-              📊 History
-            </button>
-          <button class="btn btn-warning btn-sm" @click="openWarnModal(member)">
-            ⚠️ Warn
-          </button>
-          <button class="btn btn-error btn-sm" @click="openBanModal(member)">
-            🚫 Ban
-          </button>
-    <!-- Warn Modal -->
-    <div v-if="showWarnModal" class="modal-overlay" @click="closeWarnModal">
-      <div class="modal-content" @click.stop>
-        <div class="modal-header">
-          <h2>Warn Member</h2>
-          <button class="modal-close" @click="closeWarnModal">×</button>
-        </div>
-        <div class="modal-body">
-          <p>Enter a reason for warning <strong>{{ warnTarget?.nick || warnTarget?.name }}</strong>:</p>
-          <textarea v-model="warnReason" class="modal-textarea" placeholder="Reason..." rows="3"></textarea>
-          <div v-if="warnError" class="modal-error">{{ warnError }}</div>
-          <div class="modal-actions">
-            <button class="btn btn-secondary" @click="closeWarnModal" :disabled="warnLoading">Cancel</button>
-            <button class="btn btn-warning" @click="submitWarn" :disabled="warnLoading">
-              <span v-if="warnLoading">Sending...</span>
-              <span v-else>Warn</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Ban Modal -->
-    <div v-if="showBanModal" class="modal-overlay" @click="closeBanModal">
-      <div class="modal-content" @click.stop>
-        <div class="modal-header">
-          <h2>Ban Member</h2>
-          <button class="modal-close" @click="closeBanModal">×</button>
-        </div>
-        <div class="modal-body">
-          <p>Are you sure you want to <span style="color:var(--error-color);font-weight:bold">permanently ban</span> <strong>{{ banTarget?.nick || banTarget?.name }}</strong>?</p>
-          <p>Please provide a reason for the ban:</p>
-          <textarea v-model="banReason" class="modal-textarea" placeholder="Reason..." rows="3"></textarea>
-          <div v-if="banError" class="modal-error">{{ banError }}</div>
-          <div class="modal-actions">
-            <button class="btn btn-secondary" @click="closeBanModal" :disabled="banLoading">Cancel</button>
-            <button class="btn btn-error" @click="submitBan" :disabled="banLoading">
-              <span v-if="banLoading">Banning...</span>
-              <span v-else>Ban</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-          </div>
+          </transition>
         </div>
       </div>
     </div>
@@ -1755,87 +1717,163 @@ onUnmounted(() => {
   }
 }
 
-// Activity Timeline Styles
-.activity-timeline {
-  margin-top: var(--spacing-lg);
-  border-top: 1px solid var(--border-color);
-  padding-top: var(--spacing-lg);
-
-  h3 {
-    color: var(--text-primary);
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: var(--spacing-md);
-  }
-}
-
-.activity-loading {
+// Members List View
+.members-listview {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: var(--spacing-lg);
-  color: var(--text-secondary);
-
-  .loading-spinner {
-    width: 24px;
-    height: 24px;
-    border: 2px solid var(--border-color);
-    border-top: 2px solid var(--primary-color);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-bottom: var(--spacing-sm);
-  }
+  gap: 1rem;
+  padding: 0.5rem 0;
 }
 
-.activity-empty {
-  text-align: center;
-  padding: var(--spacing-lg);
-  color: var(--text-secondary);
-  font-style: italic;
-}
+.member-list-item {
+  cursor: pointer;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  transition: box-shadow 0.2s, border-color 0.2s;
+  overflow: hidden;
+  padding: 0;
 
-.activity-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-}
-
-.activity-item {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--spacing-md);
-  padding: var(--spacing-md);
-  background: var(--bg-secondary);
-  border-radius: var(--radius-md);
-  border-left: 3px solid var(--primary-color);
-
-  .activity-icon {
-    font-size: 1.2rem;
-    width: 32px;
-    height: 32px;
+  .member-list-main {
     display: flex;
     align-items: center;
-    justify-content: center;
-    background: var(--bg-tertiary);
-    border-radius: var(--radius-sm);
-    flex-shrink: 0;
-  }
+    gap: 1rem;
+    padding: 1rem;
 
-  .activity-content {
-    flex: 1;
+    .member-avatar {
+      position: relative;
 
-    .activity-description {
-      color: var(--text-primary);
-      font-weight: 500;
-      margin-bottom: var(--spacing-xs);
-      line-height: 1.4;
+      img {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--bg-tertiary);
+      }
+
+      .status-indicator {
+        position: absolute;
+        bottom: 2px;
+        right: 2px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid var(--bg-surface);
+
+        &.status-online {
+          background: var(--success-color);
+        }
+
+        &.status-idle {
+          background: var(--warning-color);
+        }
+
+        &.status-dnd {
+          background: var(--error-color);
+        }
+
+        &.status-offline {
+          background: var(--text-secondary);
+        }
+      }
     }
 
-    .activity-time {
+    .member-list-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+
+      .member-list-name {
+        font-weight: 600;
+        color: var(--text-primary);
+        font-size: 1.05rem;
+      }
+
+      .member-list-status {
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin-top: 0.1rem;
+
+        &.status-online {
+          color: var(--success-color);
+        }
+
+        &.status-idle {
+          color: var(--warning-color);
+        }
+
+        &.status-dnd {
+          color: var(--error-color);
+        }
+
+        &.status-offline {
+          color: var(--text-secondary);
+        }
+      }
+    }
+
+    .expand-arrow {
+      font-size: 1.2rem;
       color: var(--text-secondary);
-      font-size: 0.75rem;
+      margin-left: 0.5rem;
     }
   }
+
+  .member-list-details {
+    border-top: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    padding: 1rem;
+
+    .member-details {
+      margin-bottom: 1rem;
+
+      .detail-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+
+        .detail-label {
+          color: var(--text-secondary);
+          font-size: 0.93rem;
+        }
+
+        .detail-value {
+          color: var(--text-primary);
+          font-size: 0.93rem;
+        }
+      }
+    }
+
+    .member-actions {
+      display: flex;
+      gap: 0.5rem;
+
+      .btn-sm {
+        min-width: 90px;
+      }
+    }
+  }
+
+  &.expanded {
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-color);
+  }
+}
+
+// Fade transition for details
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.2s;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  max-height: 0;
+}
+.fade-enter-to,
+.fade-leave-from {
+  opacity: 1;
+  max-height: 500px;
 }
 
 @keyframes spin {
@@ -1899,9 +1937,11 @@ onUnmounted(() => {
     align-items: flex-start;
     gap: 0.7rem;
     margin-bottom: 1.2rem;
+
     h1 {
       font-size: 1.2rem;
     }
+
     .subtitle {
       font-size: 0.95rem;
     }
@@ -1913,6 +1953,7 @@ onUnmounted(() => {
       font-size: 0.98rem;
       padding: 0.6rem 0.8rem;
     }
+
     .server-label {
       font-size: 0.98rem;
     }
@@ -1923,6 +1964,7 @@ onUnmounted(() => {
       flex-direction: column;
       gap: 0.5rem;
     }
+
     .status-item {
       font-size: 0.95rem;
       gap: 0.5rem;
@@ -1932,12 +1974,14 @@ onUnmounted(() => {
   .status-overview.grid.grid-4 {
     grid-template-columns: 1fr 1fr !important;
     gap: 0.7rem !important;
+
     .status-card {
       flex-direction: row;
       align-items: center;
       gap: 0.5rem;
       padding: 0.7rem 0.5rem;
       font-size: 0.95rem;
+
       h3 {
         font-size: 1.1rem;
       }
@@ -1963,11 +2007,13 @@ onUnmounted(() => {
 
   .search-box.input-with-icon {
     flex: 1 1 100%;
+
     .search-input {
       width: 100%;
       font-size: 0.98rem;
       padding: 0.5rem 0.8rem 0.5rem 2.2rem;
     }
+
     .leading-icon {
       left: 10px;
       font-size: 1.1rem;
@@ -1983,6 +2029,7 @@ onUnmounted(() => {
   .content-tabs .tab-buttons {
     flex-direction: column;
     gap: 0.5rem;
+
     .tab-btn {
       width: 100%;
       text-align: left;
@@ -2017,6 +2064,7 @@ onUnmounted(() => {
     width: 44px;
     height: 44px;
   }
+
   .member-avatar .status-indicator {
     width: 12px;
     height: 12px;
@@ -2032,6 +2080,7 @@ onUnmounted(() => {
     align-items: flex-start;
     gap: 0.2rem;
     padding: 0.4rem;
+
     .detail-value {
       max-width: 100%;
       text-align: left;
@@ -2044,6 +2093,7 @@ onUnmounted(() => {
     gap: 0.5rem;
     padding-top: 0.7rem;
     margin-top: 0.7rem;
+
     .btn-sm {
       width: 100%;
       font-size: 0.93rem;
@@ -2080,7 +2130,9 @@ onUnmounted(() => {
     padding: 0.2rem;
     border-radius: var(--radius-sm);
   }
-  .modal-header, .modal-body {
+
+  .modal-header,
+  .modal-body {
     padding: 0.7rem;
   }
 
@@ -2092,6 +2144,7 @@ onUnmounted(() => {
   .modal-actions {
     flex-direction: column;
     gap: 0.5rem;
+
     button {
       width: 100%;
     }
@@ -2102,6 +2155,7 @@ onUnmounted(() => {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.2rem;
+
     .detail-value {
       max-width: 100%;
       text-align: left;
@@ -2132,13 +2186,17 @@ onUnmounted(() => {
   .category-info {
     padding: 1rem;
     margin-top: 1rem;
+
     .empty-icon {
       font-size: 2rem;
     }
+
     h3 {
       font-size: 1.1rem;
     }
-    p, ul {
+
+    p,
+    ul {
       font-size: 0.95rem;
     }
   }
