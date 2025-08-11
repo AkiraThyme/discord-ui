@@ -246,48 +246,29 @@ onUnmounted(() => {
         <p>Try adjusting your search criteria or status filter.</p>
       </div>
 
-      <div v-else class="grid grid-2">
+      <div v-else class="modern-reports-grid">
         <div v-for="report in filteredReports" :key="report.id"
-          :class="['report-card', 'card', 'glass', `is-${report.status}`]" @click="viewReportDetails(report)">
-          <div class="report-header">
-            <div class="report-status">
-              <span class="status-badge" :class="`status-${report.status}`">
-                {{ getStatusIcon(report.status) }} {{ report.status }}
-              </span>
-            </div>
-            <div class="report-category" v-if="report.category">
-              <span class="category-badge chip">{{ report.category }}</span>
-            </div>
+          :class="['modern-report-card', `is-${report.status}`]" @click="viewReportDetails(report)">
+          <div class="modern-report-header">
+            <span class="modern-status-badge" :class="`status-${report.status}`">
+              {{ getStatusIcon(report.status) }} {{ report.status.replace('_', ' ').toUpperCase() }}
+            </span>
+            <span v-if="report.category" class="modern-category-badge">{{ report.category }}</span>
           </div>
-
-          <div class="report-content">
-            <h3 class="report-title">Report against {{ report.reported_user }}</h3>
-            <p class="report-reason">{{ report.reason }}</p>
+          <div class="modern-report-content">
+            <div class="modern-report-title">Report against <b>{{ report.reported_user }}</b></div>
+            <div class="modern-report-reason">{{ report.reason }}</div>
           </div>
-
-          <div class="report-meta">
-            <div class="meta-item">
-              <span class="meta-label">Reporter:</span>
-              <span class="meta-value">{{ report.reporter_name }}</span>
-            </div>
-            <div class="meta-item">
-              <span class="meta-label">Filed:</span>
-              <span class="meta-value">{{ formatTimestamp(report.created_at) }}</span>
-            </div>
+          <div class="modern-report-meta">
+            <span>By <b>{{ report.reporter_name }}</b></span>
+            <span class="modern-report-date">{{ formatTimestamp(report.created_at) }}</span>
           </div>
-
-          <div class="report-actions">
-            <button class="btn btn-secondary btn-sm ghost">
-              View Details
-            </button>
+          <div class="modern-report-actions">
+            <button class="btn btn-secondary btn-sm ghost">View Details</button>
             <button v-if="report.status === 'open'" class="btn btn-warning btn-sm"
-              @click.stop="updateReportStatus(report.id, 'in_progress')">
-              Mark In Progress
-            </button>
+              @click.stop="updateReportStatus(report.id, 'in_progress')">Mark In Progress</button>
             <button v-if="report.status !== 'resolved'" class="btn btn-success btn-sm"
-              @click.stop="updateReportStatus(report.id, 'resolved')">
-              Resolve
-            </button>
+              @click.stop="updateReportStatus(report.id, 'resolved')">Resolve</button>
           </div>
         </div>
       </div>
@@ -787,33 +768,211 @@ onUnmounted(() => {
 }
 
 // Responsive adjustments
-@media (max-width: 768px) {
+@media (max-width: 900px) {
+  .modern-reports-grid {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+  .modern-report-card {
+    padding: 1.2rem 0.8rem 1rem 0.8rem;
+    min-height: 180px;
+    font-size: 0.98rem;
+  }
+  .modern-report-title {
+    font-size: 1rem;
+  }
+  .modern-report-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2em;
+    font-size: 0.9rem;
+  }
+  .modern-report-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: stretch;
+  }
+  .modal-content {
+    max-width: 98vw;
+    width: 98vw;
+    padding: 0.5rem;
+  }
+  .modal-header, .modal-body {
+    padding: 1rem;
+  }
+  .toolbar-row {
+    flex-direction: column;
+    gap: 0.7rem;
+    align-items: stretch;
+  }
+  .toolbar-controls {
+    flex-direction: column;
+    gap: 0.7rem;
+    align-items: stretch;
+  }
+  .filters .search-input {
+    width: 100%;
+  }
+  .status-overview .status-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 1rem 0.7rem;
+  }
   .page-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
   }
+}
 
-  .grid.grid-3 {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .grid.grid-2 {
+@media (max-width: 500px) {
+  .modern-reports-grid {
     grid-template-columns: 1fr;
+    gap: 0.7rem;
   }
-
-  .filters {
-    .search-input {
-      width: 100%;
-    }
+  .modern-report-card {
+    padding: 0.7rem 0.3rem 0.7rem 0.3rem;
+    min-height: 120px;
+    font-size: 0.93rem;
+    border-radius: var(--radius-md);
   }
-
-  .report-actions {
-    flex-direction: column;
+  .modern-report-title {
+    font-size: 0.98rem;
   }
-
-  .action-buttons {
-    flex-direction: column;
+  .modern-status-badge, .modern-category-badge {
+    font-size: 0.7rem;
+    padding: 0.18em 0.5em;
+  }
+  .modal-content {
+    max-width: 100vw;
+    width: 100vw;
+    padding: 0.2rem;
+    border-radius: var(--radius-sm);
+  }
+  .modal-header, .modal-body {
+    padding: 0.7rem;
+  }
+  .toolbar-row, .toolbar-controls {
+    gap: 0.4rem;
+  }
+  .status-overview .status-card {
+    padding: 0.7rem 0.3rem;
+    font-size: 0.93rem;
+  }
+  .page-header h1 {
+    font-size: 1.3rem;
   }
 }
 </style>
+/* Modern Reports UI */
+.modern-reports-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+.modern-report-card {
+  background: var(--bg-surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  border: 1.5px solid var(--border-color);
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  transition: box-shadow 0.2s, border-color 0.2s, transform 0.15s;
+  cursor: pointer;
+  position: relative;
+  min-height: 260px;
+}
+.modern-report-card:hover {
+  box-shadow: 0 8px 32px 0 rgba(99,102,241,0.15);
+  border-color: var(--primary-color);
+  transform: translateY(-2px) scale(1.01);
+}
+.modern-report-card.is-open {
+  border-top: 4px solid var(--warning-color);
+}
+.modern-report-card.is-in_progress {
+  border-top: 4px solid var(--primary-color);
+}
+.modern-report-card.is-resolved {
+  border-top: 4px solid var(--success-color);
+}
+.modern-report-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.modern-status-badge {
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.35em 1em;
+  border-radius: 1.5em;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  border: none;
+}
+.modern-status-badge.status-open {
+  background: linear-gradient(90deg, var(--warning-color), #fbbf24);
+  color: #fff;
+}
+.modern-status-badge.status-in_progress {
+  background: linear-gradient(90deg, var(--primary-color), var(--primary-hover));
+  color: #fff;
+}
+.modern-status-badge.status-resolved {
+  background: linear-gradient(90deg, var(--success-color), #059669);
+  color: #fff;
+}
+.modern-category-badge {
+  background: var(--accent-color);
+  color: #fff;
+  font-size: 0.8rem;
+  padding: 0.25em 0.7em;
+  border-radius: 1em;
+  font-weight: 500;
+  margin-left: 0.5em;
+}
+.modern-report-content {
+  flex: 1;
+}
+.modern-report-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.3em;
+}
+.modern-report-reason {
+  color: var(--text-secondary);
+  font-size: 0.98rem;
+  line-height: 1.5;
+  margin-bottom: 0.2em;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.modern-report-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.93rem;
+  color: var(--text-muted);
+  margin-bottom: 0.2em;
+}
+.modern-report-date {
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+}
+.modern-report-actions {
+  display: flex;
+  gap: 0.7rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
