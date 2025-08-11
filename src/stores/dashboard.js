@@ -233,6 +233,13 @@ export const useDashboardStore = defineStore('dashboard', () => {
         isConnected.value = true
       }
 
+      setInterval(() => {
+        if (websocket.value && websocket.value.readyState === WebSocket.OPEN) {
+          websocket.value.send(JSON.stringify({ type: "--- HEARTBEAT ---" }))
+        }
+      }, 30000)
+
+
       websocket.value.onmessage = (event) => {
         const data = JSON.parse(event.data)
         handleWebSocketMessage(data)
