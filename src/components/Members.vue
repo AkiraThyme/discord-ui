@@ -1511,7 +1511,7 @@ onUnmounted(() => {
   font-size: 0.95rem;
   font-weight: 500;
 }
-}
+
 
 .modal-header {
   display: flex;
