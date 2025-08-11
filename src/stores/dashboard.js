@@ -6,7 +6,6 @@ import { useAuthStore } from '@/stores/auth'
 const API_BASE_URL = 'https://discord-adminbot.onrender.com'
 
 export const useDashboardStore = defineStore('dashboard', () => {
-  // State
   const members = ref([])
   const reports = ref([])
   const settings = ref({})
@@ -44,7 +43,6 @@ export const useDashboardStore = defineStore('dashboard', () => {
       const data = await response.json()
       servers.value = data
 
-      // Auto-select first server if available
       if (data.length > 0 && !selectedServer.value) {
         selectedServer.value = data[0]
         await fetchMembers()
@@ -78,8 +76,6 @@ export const useDashboardStore = defineStore('dashboard', () => {
 
   async function fetchReports() {
     try {
-      // For now, we'll use Supabase for reports since they're stored there
-      // In the future, you could add a reports endpoint to your Discord bot API
       const { data, error: supabaseError } = await supabase
         .from('reports')
         .select('*')
@@ -89,7 +85,6 @@ export const useDashboardStore = defineStore('dashboard', () => {
         throw supabaseError
       }
 
-      // Normalize statuses so UI counters work consistently
       const normalizeStatus = (raw) => {
         if (!raw) return 'open'
         const normalized = String(raw).toLowerCase().replace(/[\s-]+/g, '_')
@@ -121,7 +116,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
       settings.value = data
     } catch (err) {
       error.value = 'Failed to fetch settings from Discord bot.'
-      console.error('Error fetching sett      ings:', err)
+      console.error('Error fetching settings:', err)
     }
   }
 
@@ -136,7 +131,6 @@ export const useDashboardStore = defineStore('dashboard', () => {
         throw supabaseError
       }
 
-      // Update local state with normalized value
       const normalized = String(status).toLowerCase().replace(/[\s-]+/g, '_')
       const report = reports.value.find(r => r.id === reportId)
       if (report) {
@@ -238,13 +232,6 @@ export const useDashboardStore = defineStore('dashboard', () => {
         console.log('WebSocket connected')
         isConnected.value = true
       }
-
-      setInterval(() => {
-        if (websocket.value && websocket.value.readyState === WebSocket.OPEN) {
-          websocket.value.send(JSON.stringify({ type: "ping" }))
-        }
-      }, 30000)
-
 
       websocket.value.onmessage = (event) => {
         const data = JSON.parse(event.data)
