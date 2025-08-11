@@ -922,14 +922,28 @@ onUnmounted(() => {
     gap: 0.7rem;
     align-items: stretch;
   }
-  .filters .search-input {
-    width: 100%;
+  .filters {
+    padding: 0.7rem;
+    .search-input {
+      width: 100%;
+      font-size: 0.98rem;
+      padding: 0.6rem 0.8rem;
+    }
+    .filter-select {
+      font-size: 0.98rem;
+      padding: 0.6rem 0.8rem;
+    }
   }
-  .status-overview .status-card {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-    padding: 1rem 0.7rem;
+  .status-overview {
+    grid-template-columns: 1fr !important;
+    .status-card {
+      flex-direction: row;
+      align-items: center;
+      gap: 0.7rem;
+      padding: 1rem 0.7rem;
+      font-size: 1rem;
+      justify-content: flex-start;
+    }
   }
   .page-header {
     flex-direction: column;
@@ -968,9 +982,26 @@ onUnmounted(() => {
   .toolbar-row, .toolbar-controls {
     gap: 0.4rem;
   }
-  .status-overview .status-card {
-    padding: 0.7rem 0.3rem;
-    font-size: 0.93rem;
+  .filters {
+    padding: 0.4rem;
+    .search-input {
+      font-size: 0.93rem;
+      padding: 0.5rem 0.6rem;
+    }
+    .filter-select {
+      font-size: 0.93rem;
+      padding: 0.5rem 0.6rem;
+    }
+  }
+  .status-overview {
+    grid-template-columns: 1fr !important;
+    .status-card {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.3rem;
+      padding: 0.7rem 0.3rem;
+      font-size: 0.93rem;
+    }
   }
   .page-header h1 {
     font-size: 1.3rem;
