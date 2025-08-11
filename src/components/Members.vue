@@ -215,56 +215,90 @@ async function viewMemberHistory(member) {
   await fetchMemberActivity(member.id)
 }
 
-async function warnMember(member) {
-  const reason = prompt(`Please enter a reason for warning ${member.nick || member.name}:`);
-  if (!reason) {
-    return;
+
+// Modal state for warning/ban
+const showWarnModal = ref(false)
+const showBanModal = ref(false)
+const warnReason = ref('')
+const banReason = ref('')
+const warnTarget = ref(null)
+const banTarget = ref(null)
+const warnLoading = ref(false)
+const banLoading = ref(false)
+const warnError = ref('')
+const banError = ref('')
+
+function openWarnModal(member) {
+  warnTarget.value = member
+  warnReason.value = ''
+  warnError.value = ''
+  showWarnModal.value = true
+}
+function openBanModal(member) {
+  banTarget.value = member
+  banReason.value = ''
+  banError.value = ''
+  showBanModal.value = true
+}
+function closeWarnModal() {
+  showWarnModal.value = false
+  warnTarget.value = null
+  warnReason.value = ''
+  warnError.value = ''
+}
+function closeBanModal() {
+  showBanModal.value = false
+  banTarget.value = null
+  banReason.value = ''
+  banError.value = ''
+}
+
+async function submitWarn() {
+  if (!warnReason.value.trim()) {
+    warnError.value = 'Please enter a reason.'
+    return
   }
-
+  warnLoading.value = true
+  warnError.value = ''
   try {
-    const response = await authStore.authorizedFetch(`${API_BASE_URL}/servers/${selectedServer.value.id}/members/${member.id}/warn?reason=${encodeURIComponent(reason)}`, {
+    const member = warnTarget.value
+    const response = await authStore.authorizedFetch(`${API_BASE_URL}/servers/${selectedServer.value.id}/members/${member.id}/warn?reason=${encodeURIComponent(warnReason.value)}`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-
-    const result = await response.json();
-    if (!response.ok) {
-      throw new Error(result.detail || 'Failed to warn the member.');
-    }
-
-    alert(`Successfully warned ${member.name}.`);
+      headers: { 'Content-Type': 'application/json' }
+    })
+    const result = await response.json()
+    if (!response.ok) throw new Error(result.detail || 'Failed to warn the member.')
+    closeWarnModal()
+    // Optionally show a toast/notification here
   } catch (error) {
-    console.error('Error warning member:', error);
-    alert(`Error: ${error.message}`);
+    warnError.value = error.message
+  } finally {
+    warnLoading.value = false
   }
 }
 
-async function banMember(member) {
-  const reason = prompt(`ARE YOU SURE? Enter a reason to permanently ban ${member.nick || member.name}:`);
-  if (!reason) {
-    return;
+async function submitBan() {
+  if (!banReason.value.trim()) {
+    banError.value = 'Please enter a reason.'
+    return
   }
-
+  banLoading.value = true
+  banError.value = ''
   try {
-    const response = await authStore.authorizedFetch(`${API_BASE_URL}/servers/${selectedServer.value.id}/members/${member.id}/ban?reason=${encodeURIComponent(reason)}`, {
+    const member = banTarget.value
+    const response = await authStore.authorizedFetch(`${API_BASE_URL}/servers/${selectedServer.value.id}/members/${member.id}/ban?reason=${encodeURIComponent(banReason.value)}`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-
-    const result = await response.json();
-    if (!response.ok) {
-      throw new Error(result.detail || 'Failed to ban the member.');
-    }
-
-    alert(`Successfully banned ${member.name}.`);
-    members.value = members.value.filter(m => m.id !== member.id);
+      headers: { 'Content-Type': 'application/json' }
+    })
+    const result = await response.json()
+    if (!response.ok) throw new Error(result.detail || 'Failed to ban the member.')
+    members.value = members.value.filter(m => m.id !== member.id)
+    closeBanModal()
+    // Optionally show a toast/notification here
   } catch (error) {
-    console.error('Error banning member:', error);
-    alert(`Error: ${error.message}`);
+    banError.value = error.message
+  } finally {
+    banLoading.value = false
   }
 }
 
@@ -585,12 +619,56 @@ onUnmounted(() => {
             <button class="btn btn-secondary btn-sm" @click="viewMemberHistory(member)">
               📊 History
             </button>
-            <button class="btn btn-warning btn-sm" @click="warnMember(member)">
-              ⚠️ Warn
+          <button class="btn btn-warning btn-sm" @click="openWarnModal(member)">
+            ⚠️ Warn
+          </button>
+          <button class="btn btn-error btn-sm" @click="openBanModal(member)">
+            🚫 Ban
+          </button>
+    <!-- Warn Modal -->
+    <div v-if="showWarnModal" class="modal-overlay" @click="closeWarnModal">
+      <div class="modal-content" @click.stop>
+        <div class="modal-header">
+          <h2>Warn Member</h2>
+          <button class="modal-close" @click="closeWarnModal">×</button>
+        </div>
+        <div class="modal-body">
+          <p>Enter a reason for warning <strong>{{ warnTarget?.nick || warnTarget?.name }}</strong>:</p>
+          <textarea v-model="warnReason" class="modal-textarea" placeholder="Reason..." rows="3"></textarea>
+          <div v-if="warnError" class="modal-error">{{ warnError }}</div>
+          <div class="modal-actions">
+            <button class="btn btn-secondary" @click="closeWarnModal" :disabled="warnLoading">Cancel</button>
+            <button class="btn btn-warning" @click="submitWarn" :disabled="warnLoading">
+              <span v-if="warnLoading">Sending...</span>
+              <span v-else>Warn</span>
             </button>
-            <button class="btn btn-error btn-sm" @click="banMember(member)">
-              🚫 Ban
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ban Modal -->
+    <div v-if="showBanModal" class="modal-overlay" @click="closeBanModal">
+      <div class="modal-content" @click.stop>
+        <div class="modal-header">
+          <h2>Ban Member</h2>
+          <button class="modal-close" @click="closeBanModal">×</button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to <span style="color:var(--error-color);font-weight:bold">permanently ban</span> <strong>{{ banTarget?.nick || banTarget?.name }}</strong>?</p>
+          <p>Please provide a reason for the ban:</p>
+          <textarea v-model="banReason" class="modal-textarea" placeholder="Reason..." rows="3"></textarea>
+          <div v-if="banError" class="modal-error">{{ banError }}</div>
+          <div class="modal-actions">
+            <button class="btn btn-secondary" @click="closeBanModal" :disabled="banLoading">Cancel</button>
+            <button class="btn btn-error" @click="submitBan" :disabled="banLoading">
+              <span v-if="banLoading">Banning...</span>
+              <span v-else>Ban</span>
             </button>
+          </div>
+        </div>
+      </div>
+    </div>
           </div>
         </div>
       </div>
@@ -1396,6 +1474,43 @@ onUnmounted(() => {
   width: 90%;
   max-height: 80vh;
   overflow-y: auto;
+  padding: 0;
+}
+
+.modal-body {
+  padding: var(--spacing-lg);
+}
+
+.modal-textarea {
+  width: 100%;
+  min-height: 80px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  margin: 0.5rem 0 1rem 0;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  resize: vertical;
+  transition: border-color 0.2s;
+}
+.modal-textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(99,102,241,0.1);
+}
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.modal-error {
+  color: var(--error-color);
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
 }
 
 .modal-header {
