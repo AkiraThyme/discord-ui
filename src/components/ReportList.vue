@@ -952,7 +952,7 @@ onUnmounted(() => {
   }
 }
 
-@media (max-width: 500px) {
+@media (max-width: 900px) {
   .modern-reports-grid {
     grid-template-columns: 1fr;
     gap: 0.7rem;
@@ -993,18 +993,144 @@ onUnmounted(() => {
       padding: 0.5rem 0.6rem;
     }
   }
-  .status-overview {
-    grid-template-columns: 1fr !important;
-    .status-card {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.3rem;
-      padding: 0.7rem 0.3rem;
-      font-size: 0.93rem;
-    }
-  }
+  // .status-overview {
+  //   grid-template-columns: 1fr !important;
+  //   .status-card {
+  //     flex-direction: column;
+  //     align-items: flex-start;
+  //     gap: 0.3rem;
+  //     padding: 0.7rem 0.3rem;
+  //     font-size: 0.93rem;
+  //   }
+  // }
   .page-header h1 {
     font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .reports-page {
+    padding: 0 !important;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.7rem;
+    margin-bottom: 1.2rem;
+    h1 {
+      font-size: 1.2rem;
+    }
+    .subtitle {
+      font-size: 0.95rem;
+    }
+  }
+
+  .status-overview {
+    grid-template-columns: 1fr !important;
+    gap: 0.7rem !important;
+    .status-card {
+      flex-direction: row;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.7rem 0.5rem;
+      font-size: 0.95rem;
+      h3 {
+        font-size: 1.1rem;
+      }
+    }
+  }
+
+  .filters.toolbar {
+    padding: 0.5rem;
+    border-radius: var(--radius-md);
+  }
+
+  .toolbar-row {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: stretch;
+  }
+
+  .toolbar-controls {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: stretch;
+  }
+
+  .search-box.input-with-icon {
+    flex: 1 1 100%;
+    .search-input {
+      width: 100%;
+      font-size: 0.98rem;
+      padding: 0.5rem 0.8rem 0.5rem 2.2rem;
+    }
+    .leading-icon {
+      left: 10px;
+      font-size: 1.1rem;
+    }
+  }
+
+  .filter-select {
+    width: 100%;
+    font-size: 0.98rem;
+    padding: 0.5rem 0.8rem;
+  }
+
+  .modern-reports-grid {
+    grid-template-columns: 1fr;
+    gap: 0.7rem;
+    margin-bottom: 1rem;
+  }
+
+  .modern-report-card {
+    padding: 0.7rem 0.3rem;
+    min-height: 110px;
+    font-size: 0.93rem;
+    border-radius: var(--radius-md);
+    gap: 0.7rem;
+  }
+
+  .modern-report-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+  }
+
+  .modern-report-title {
+    font-size: 0.98rem;
+  }
+
+  .modern-status-badge, .modern-category-badge {
+    font-size: 0.7rem;
+    padding: 0.18em 0.5em;
+  }
+
+  .modern-report-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2em;
+    font-size: 0.9rem;
+  }
+
+  .modern-report-actions {
+    flex-direction: column;
+    gap: 0.4rem;
+    align-items: stretch;
+    margin-top: 0.3rem;
+    button {
+      width: 100%;
+    }
+  }
+
+  .modal-content {
+    max-width: 100vw;
+    width: 100vw;
+    padding: 0.2rem;
+    border-radius: var(--radius-sm);
+  }
+  .modal-header, .modal-body {
+    padding: 0.7rem;
   }
 }
 </style>

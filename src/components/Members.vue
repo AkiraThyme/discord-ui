@@ -1893,23 +1893,254 @@ onUnmounted(() => {
   }
 }
 
-.members-grid {
-  height: 600px;
-  overflow-y: auto;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 2rem;
-  scrollbar-width: none;
-  /* Firefox */
-  -ms-overflow-style: none;
-  /* IE 10+ */
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  padding: 1rem;
-}
+@media (max-width: 600px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.7rem;
+    margin-bottom: 1.2rem;
+    h1 {
+      font-size: 1.2rem;
+    }
+    .subtitle {
+      font-size: 0.95rem;
+    }
+  }
 
-.members-grid::-webkit-scrollbar {
-  display: none;
-  /* Chrome, Safari, Opera */
+  .server-selector {
+    .server-select {
+      max-width: 100%;
+      font-size: 0.98rem;
+      padding: 0.6rem 0.8rem;
+    }
+    .server-label {
+      font-size: 0.98rem;
+    }
+  }
+
+  .connection-status {
+    .status-indicators {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .status-item {
+      font-size: 0.95rem;
+      gap: 0.5rem;
+    }
+  }
+
+  .status-overview.grid.grid-4 {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.7rem !important;
+    .status-card {
+      flex-direction: row;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.7rem 0.5rem;
+      font-size: 0.95rem;
+      h3 {
+        font-size: 1.1rem;
+      }
+    }
+  }
+
+  .filters.toolbar {
+    padding: 0.5rem;
+    border-radius: var(--radius-md);
+  }
+
+  .toolbar-row {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: stretch;
+  }
+
+  .toolbar-controls {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: stretch;
+  }
+
+  .search-box.input-with-icon {
+    flex: 1 1 100%;
+    .search-input {
+      width: 100%;
+      font-size: 0.98rem;
+      padding: 0.5rem 0.8rem 0.5rem 2.2rem;
+    }
+    .leading-icon {
+      left: 10px;
+      font-size: 1.1rem;
+    }
+  }
+
+  .filter-select {
+    width: 100%;
+    font-size: 0.98rem;
+    padding: 0.5rem 0.8rem;
+  }
+
+  .content-tabs .tab-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+    .tab-btn {
+      width: 100%;
+      text-align: left;
+      padding: 0.7rem 1rem;
+      font-size: 1rem;
+    }
+  }
+
+  .members-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 0.5rem;
+    height: auto;
+  }
+
+  .member-card {
+    min-width: unset;
+    max-width: unset;
+    padding: 1rem 0.5rem;
+    border-radius: var(--radius-md);
+  }
+
+  .member-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.7rem;
+    margin-bottom: 0.7rem;
+    padding-bottom: 0.7rem;
+  }
+
+  .member-avatar img {
+    width: 44px;
+    height: 44px;
+  }
+  .member-avatar .status-indicator {
+    width: 12px;
+    height: 12px;
+    border-width: 2px;
+  }
+
+  .member-info .member-name {
+    font-size: 1rem;
+  }
+
+  .member-details .detail-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2rem;
+    padding: 0.4rem;
+    .detail-value {
+      max-width: 100%;
+      text-align: left;
+      font-size: 0.93rem;
+    }
+  }
+
+  .member-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-top: 0.7rem;
+    margin-top: 0.7rem;
+    .btn-sm {
+      width: 100%;
+      font-size: 0.93rem;
+      padding: 0.6rem 0.7rem;
+    }
+  }
+
+  .channels-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .channel-card {
+    padding: 1rem 0.5rem;
+    border-radius: var(--radius-md);
+  }
+
+  .channel-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.7rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .channel-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 1.1rem;
+  }
+
+  .modal-content {
+    max-width: 100vw;
+    width: 100vw;
+    padding: 0.2rem;
+    border-radius: var(--radius-sm);
+  }
+  .modal-header, .modal-body {
+    padding: 0.7rem;
+  }
+
+  .modal-textarea {
+    font-size: 0.95rem;
+    padding: 0.5rem 0.7rem;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+    button {
+      width: 100%;
+    }
+  }
+
+  .member-details-modal .detail-row,
+  .channel-details .detail-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2rem;
+    .detail-value {
+      max-width: 100%;
+      text-align: left;
+    }
+  }
+
+  .activity-list,
+  .channel-members .member-list {
+    gap: 0.5rem;
+  }
+
+  .activity-item,
+  .channel-members .member-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+    padding: 0.5rem;
+  }
+
+  .activity-icon,
+  .channel-members .member-avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 1rem;
+  }
+
+  .empty-state,
+  .category-info {
+    padding: 1rem;
+    margin-top: 1rem;
+    .empty-icon {
+      font-size: 2rem;
+    }
+    h3 {
+      font-size: 1.1rem;
+    }
+    p, ul {
+      font-size: 0.95rem;
+    }
+  }
 }
 </style>

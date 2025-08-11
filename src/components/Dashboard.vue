@@ -653,4 +653,137 @@ onUnmounted(() => {
     }
   }
 }
+
+@media (max-width: 600px) {
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.7rem;
+    margin-bottom: 1.2rem;
+    h1 {
+      font-size: 1.3rem;
+    }
+    .subtitle {
+      font-size: 0.98rem;
+    }
+  }
+
+  .server-selector {
+    .server-select {
+      max-width: 100%;
+      font-size: 0.98rem;
+      padding: 0.6rem 0.8rem;
+    }
+    .server-label {
+      font-size: 0.98rem;
+    }
+  }
+
+  .connection-status {
+    .status-indicators {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .status-item {
+      font-size: 0.95rem;
+      gap: 0.5rem;
+    }
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 0.7rem;
+    .stat-card {
+      padding: 1rem;
+      .stat-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.3rem;
+      }
+      .stat-content .stat-number {
+        font-size: 1.2rem;
+      }
+    }
+  }
+
+  .dashboard-content {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .activity-section {
+    .activity-list {
+      gap: 0.7rem;
+    }
+    .activity-item {
+      padding: 0.7rem;
+      gap: 0.7rem;
+      .activity-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 1.1rem;
+      }
+      .activity-content .activity-title {
+        font-size: 0.98rem;
+      }
+    }
+    .empty-state {
+      padding: 1.5rem;
+      .empty-icon {
+        font-size: 2rem;
+      }
+      p, .empty-description {
+        font-size: 0.95rem;
+      }
+    }
+  }
+
+  .quick-actions-section {
+    .actions-grid {
+      gap: 0.7rem;
+    }
+    .action-card {
+      padding: 1rem;
+      gap: 0.7rem;
+      .action-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 1.1rem;
+      }
+      .action-content h3 {
+        font-size: 1rem;
+      }
+      .action-content p {
+        font-size: 0.93rem;
+      }
+    }
+  }
+
+  .error-notice {
+    padding: 0.7rem;
+    .error-header {
+      gap: 0.3rem;
+      .error-icon {
+        font-size: 1rem;
+      }
+      h4 {
+        font-size: 1rem;
+      }
+    }
+    p, .error-actions {
+      font-size: 0.93rem;
+    }
+  }
+
+  .loading-overlay {
+    padding: 2rem;
+    .loading-spinner {
+      width: 32px;
+      height: 32px;
+    }
+    p {
+      font-size: 0.98rem;
+    }
+  }
+}
 </style>
