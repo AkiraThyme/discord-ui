@@ -34,6 +34,7 @@ const channelStats = ref({
 const websocket = ref(null)
 const isConnected = ref(false)
 const activeTab = ref('members')
+const expandedMember = ref(null)
 
 
 // API Configuration
@@ -422,6 +423,10 @@ function handleServerChange() {
     fetchMembers()
     fetchChannels()
   }
+}
+
+function toggleExpand(id) {
+  expandedMember.value = expandedMember.value === id ? null : id
 }
 
 onMounted(() => {
