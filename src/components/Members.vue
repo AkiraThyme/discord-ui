@@ -149,7 +149,7 @@ async function fetchMemberActivity(memberId) {
 
 function setupWebSocket() {
   try {
-    websocket.value = new WebSocket('ws://127.0.0.1:8000/ws/status')
+    websocket.value = new WebSocket('wss://discord-adminbot.onrender.com/ws/status')
 
     websocket.value.onopen = () => {
       console.log('Members WebSocket connected')
@@ -164,7 +164,6 @@ function setupWebSocket() {
     websocket.value.onclose = () => {
       console.log('Members WebSocket disconnected')
       isConnected.value = false
-      // Attempt to reconnect after 5 seconds
       setTimeout(() => {
         if (!isConnected.value) {
           setupWebSocket()
