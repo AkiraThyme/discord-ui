@@ -343,6 +343,118 @@ onUnmounted(() => {
 </template>
 
 <style lang="scss" scoped>
+
+.modern-reports-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+.modern-report-card {
+  background: var(--bg-surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  border: 1.5px solid var(--border-color);
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  transition: box-shadow 0.2s, border-color 0.2s, transform 0.15s;
+  cursor: pointer;
+  position: relative;
+  min-height: 260px;
+}
+.modern-report-card:hover {
+  box-shadow: 0 8px 32px 0 rgba(99,102,241,0.15);
+  border-color: var(--primary-color);
+  transform: translateY(-2px) scale(1.01);
+}
+.modern-report-card.is-open {
+  border-top: 4px solid var(--warning-color);
+}
+.modern-report-card.is-in_progress {
+  border-top: 4px solid var(--primary-color);
+}
+.modern-report-card.is-resolved {
+  border-top: 4px solid var(--success-color);
+}
+.modern-report-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.modern-status-badge {
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.35em 1em;
+  border-radius: 1.5em;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  border: none;
+}
+.modern-status-badge.status-open {
+  background: linear-gradient(90deg, var(--warning-color), #fbbf24);
+  color: #fff;
+}
+.modern-status-badge.status-in_progress {
+  background: linear-gradient(90deg, var(--primary-color), var(--primary-hover));
+  color: #fff;
+}
+.modern-status-badge.status-resolved {
+  background: linear-gradient(90deg, var(--success-color), #059669);
+  color: #fff;
+}
+.modern-category-badge {
+  background: var(--accent-color);
+  color: #fff;
+  font-size: 0.8rem;
+  padding: 0.25em 0.7em;
+  border-radius: 1em;
+  font-weight: 500;
+  margin-left: 0.5em;
+}
+.modern-report-content {
+  flex: 1;
+}
+.modern-report-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.3em;
+}
+.modern-report-reason {
+  color: var(--text-secondary);
+  font-size: 0.98rem;
+  line-height: 1.5;
+  margin-bottom: 0.2em;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.modern-report-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.93rem;
+  color: var(--text-muted);
+  margin-bottom: 0.2em;
+}
+.modern-report-date {
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+}
+.modern-report-actions {
+  display: flex;
+  gap: 0.7rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
 .reports-page {
   position: relative;
 }
@@ -865,114 +977,3 @@ onUnmounted(() => {
   }
 }
 </style>
-/* Modern Reports UI */
-.modern-reports-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-  gap: 2rem;
-  margin-bottom: 2rem;
-}
-.modern-report-card {
-  background: var(--bg-surface);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-lg);
-  border: 1.5px solid var(--border-color);
-  padding: 2rem 1.5rem 1.5rem 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
-  transition: box-shadow 0.2s, border-color 0.2s, transform 0.15s;
-  cursor: pointer;
-  position: relative;
-  min-height: 260px;
-}
-.modern-report-card:hover {
-  box-shadow: 0 8px 32px 0 rgba(99,102,241,0.15);
-  border-color: var(--primary-color);
-  transform: translateY(-2px) scale(1.01);
-}
-.modern-report-card.is-open {
-  border-top: 4px solid var(--warning-color);
-}
-.modern-report-card.is-in_progress {
-  border-top: 4px solid var(--primary-color);
-}
-.modern-report-card.is-resolved {
-  border-top: 4px solid var(--success-color);
-}
-.modern-report-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-}
-.modern-status-badge {
-  font-size: 0.85rem;
-  font-weight: 600;
-  padding: 0.35em 1em;
-  border-radius: 1.5em;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  background: var(--bg-tertiary);
-  color: var(--text-primary);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-  border: none;
-}
-.modern-status-badge.status-open {
-  background: linear-gradient(90deg, var(--warning-color), #fbbf24);
-  color: #fff;
-}
-.modern-status-badge.status-in_progress {
-  background: linear-gradient(90deg, var(--primary-color), var(--primary-hover));
-  color: #fff;
-}
-.modern-status-badge.status-resolved {
-  background: linear-gradient(90deg, var(--success-color), #059669);
-  color: #fff;
-}
-.modern-category-badge {
-  background: var(--accent-color);
-  color: #fff;
-  font-size: 0.8rem;
-  padding: 0.25em 0.7em;
-  border-radius: 1em;
-  font-weight: 500;
-  margin-left: 0.5em;
-}
-.modern-report-content {
-  flex: 1;
-}
-.modern-report-title {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 0.3em;
-}
-.modern-report-reason {
-  color: var(--text-secondary);
-  font-size: 0.98rem;
-  line-height: 1.5;
-  margin-bottom: 0.2em;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.modern-report-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.93rem;
-  color: var(--text-muted);
-  margin-bottom: 0.2em;
-}
-.modern-report-date {
-  font-size: 0.92rem;
-  color: var(--text-secondary);
-}
-.modern-report-actions {
-  display: flex;
-  gap: 0.7rem;
-  margin-top: 0.5rem;
-  flex-wrap: wrap;
-}
