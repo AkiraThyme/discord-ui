@@ -3,7 +3,6 @@ import { ref, computed } from 'vue'
 import { supabase } from '@/auth/supabase'
 import { useAuthStore } from '@/stores/auth'
 
-// API Configuration
 const API_BASE_URL = 'https://discord-adminbot.onrender.com'
 
 export const useDashboardStore = defineStore('dashboard', () => {
@@ -18,7 +17,6 @@ export const useDashboardStore = defineStore('dashboard', () => {
   const websocket = ref(null)
   const isConnected = ref(false)
 
-  // Computed
   const onlineMembers = computed(() => {
     return members.value.filter(member => member.status !== 'offline').length
   })
@@ -32,11 +30,10 @@ export const useDashboardStore = defineStore('dashboard', () => {
       totalMembers: members.value.length,
       onlineMembers: onlineMembers.value,
       openReports: openReports.value,
-      activeChannels: 5 // This would be calculated from actual channel data
+      activeChannels: 5
     }
   })
 
-  // Actions
   async function fetchServers() {
     const { authorizedFetch } = useAuthStore()
     try {
@@ -236,21 +233,20 @@ export const useDashboardStore = defineStore('dashboard', () => {
 
   function setupWebSocket() {
     try {
-        websocket.value = new WebSocket('wss://discord-adminbot.onrender.com/ws/status')
-        websocket.value.onopen = () => {
+      websocket.value = new WebSocket('wss://discord-adminbot.onrender.com/ws/status')
+      websocket.value.onopen = () => {
         console.log('WebSocket connected')
-        isConnected    .value = true
-        }
+        isConnected.value = true
+      }
 
-setInterval(() => {
-        // Make sure the socket is still open before sending
+      setInterval(() => {
         if (websocket.value && websocket.value.readyState === WebSocket.OPEN) {
-          // Sending a simple "ping" message
-          websocket.value.send(JSON.stringify({ type: "ping" }));
+          websocket.value.send(JSON.stringify({ type: "ping" }))
         }
-      }, 30000); // Send a ping every 30 seconds
-    };
-        websocket.value.onmessage = (event    ) => {
+      }, 30000)
+
+
+      websocket.value.onmessage = (event) => {
         const data = JSON.parse(event.data)
         handleWebSocketMessage(data)
       }
@@ -264,6 +260,7 @@ setInterval(() => {
           }
         }, 5000)
       }
+
       websocket.value.onerror = (error) => {
         console.error('WebSocket error:', error)
         isConnected.value = false
