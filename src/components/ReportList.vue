@@ -167,21 +167,21 @@ onUnmounted(() => {
 
     <!-- Status Overview -->
     <div class="status-overview grid grid-3 mb-4">
-      <div class="status-card open">
+      <div class="status-card open glass">
         <div class="status-icon">🚨</div>
         <div class="status-info">
           <h3>{{ statusCounts.open }}</h3>
           <p>Open Reports</p>
         </div>
       </div>
-      <div class="status-card in-progress">
+      <div class="status-card in-progress glass">
         <div class="status-icon">⏳</div>
         <div class="status-info">
           <h3>{{ statusCounts.in_progress }}</h3>
           <p>In Progress</p>
         </div>
       </div>
-      <div class="status-card resolved">
+      <div class="status-card resolved glass">
         <div class="status-icon">✅</div>
         <div class="status-info">
           <h3>{{ statusCounts.resolved }}</h3>
@@ -190,40 +190,39 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <!-- Filters -->
-    <div class="filters card mb-4">
-      <div class="flex items-center gap-4">
-        <div class="search-box">
-          <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="Search reports..."
-            class="search-input"
-          />
+    <!-- Toolbar / Filters -->
+    <div class="filters toolbar glass mb-4">
+      <div class="toolbar-row">
+        <div class="search-box input-with-icon">
+          <span class="leading-icon">🔎</span>
+          <input v-model="searchQuery" type="text" placeholder="Search reports, users, or reasons..."
+            class="search-input" />
         </div>
-        <div class="status-filter">
-          <select v-model="statusFilter" class="filter-select">
-            <option value="all">All Status</option>
-            <option value="open">Open</option>
-            <option value="in_progress">In Progress</option>
-            <option value="resolved">Resolved</option>
-          </select>
-        </div>
-        <div class="member-filter">
-          <select v-model="memberFilter" class="filter-select">
-            <option value="all">All Members</option>
-            <option v-for="user in reportedUsers" :key="user" :value="user">
-              {{ user }}
-            </option>
-          </select>
-        </div>
-        <div class="reporter-filter">
-          <select v-model="reporterFilter" class="filter-select">
-            <option value="all">All Reporters</option>
-            <option v-for="user in reporters" :key="user" :value="user">
-              {{ user }}
-            </option>
-          </select>
+        <div class="toolbar-controls">
+          <div class="status-filter">
+            <select v-model="statusFilter" class="filter-select">
+              <option value="all">All Status</option>
+              <option value="open">Open</option>
+              <option value="in_progress">In Progress</option>
+              <option value="resolved">Resolved</option>
+            </select>
+          </div>
+          <div class="member-filter">
+            <select v-model="memberFilter" class="filter-select">
+              <option value="all">All Members</option>
+              <option v-for="user in reportedUsers" :key="user" :value="user">
+                {{ user }}
+              </option>
+            </select>
+          </div>
+          <div class="reporter-filter">
+            <select v-model="reporterFilter" class="filter-select">
+              <option value="all">All Reporters</option>
+              <option v-for="user in reporters" :key="user" :value="user">
+                {{ user }}
+              </option>
+            </select>
+          </div>
         </div>
       </div>
     </div>
@@ -248,12 +247,8 @@ onUnmounted(() => {
       </div>
 
       <div v-else class="grid grid-2">
-        <div
-          v-for="report in filteredReports"
-          :key="report.id"
-          class="report-card card"
-          @click="viewReportDetails(report)"
-        >
+        <div v-for="report in filteredReports" :key="report.id"
+          :class="['report-card', 'card', 'glass', `is-${report.status}`]" @click="viewReportDetails(report)">
           <div class="report-header">
             <div class="report-status">
               <span class="status-badge" :class="`status-${report.status}`">
@@ -261,7 +256,7 @@ onUnmounted(() => {
               </span>
             </div>
             <div class="report-category" v-if="report.category">
-              <span class="category-badge">{{ report.category }}</span>
+              <span class="category-badge chip">{{ report.category }}</span>
             </div>
           </div>
 
@@ -282,21 +277,15 @@ onUnmounted(() => {
           </div>
 
           <div class="report-actions">
-            <button class="btn btn-secondary btn-sm">
+            <button class="btn btn-secondary btn-sm ghost">
               View Details
             </button>
-            <button
-              v-if="report.status === 'open'"
-              class="btn btn-warning btn-sm"
-              @click.stop="updateReportStatus(report.id, 'in_progress')"
-            >
+            <button v-if="report.status === 'open'" class="btn btn-warning btn-sm"
+              @click.stop="updateReportStatus(report.id, 'in_progress')">
               Mark In Progress
             </button>
-            <button
-              v-if="report.status !== 'resolved'"
-              class="btn btn-success btn-sm"
-              @click.stop="updateReportStatus(report.id, 'resolved')"
-            >
+            <button v-if="report.status !== 'resolved'" class="btn btn-success btn-sm"
+              @click.stop="updateReportStatus(report.id, 'resolved')">
               Resolve
             </button>
           </div>
@@ -306,7 +295,7 @@ onUnmounted(() => {
 
     <!-- Report Details Modal -->
     <div v-if="showReportModal" class="modal-overlay" @click="closeReportModal">
-      <div class="modal-content" @click.stop>
+      <div class="modal-content glass" @click.stop>
         <div class="modal-header">
           <h2>Report Details</h2>
           <button class="modal-close" @click="closeReportModal">×</button>
@@ -349,18 +338,12 @@ onUnmounted(() => {
             <div class="detail-section">
               <h3>Actions</h3>
               <div class="action-buttons">
-                <button
-                  v-if="selectedReport.status === 'open'"
-                  class="btn btn-warning"
-                  @click="updateReportStatus(selectedReport.id, 'in_progress')"
-                >
+                <button v-if="selectedReport.status === 'open'" class="btn btn-warning"
+                  @click="updateReportStatus(selectedReport.id, 'in_progress')">
                   ⏳ Mark In Progress
                 </button>
-                <button
-                  v-if="selectedReport.status !== 'resolved'"
-                  class="btn btn-success"
-                  @click="updateReportStatus(selectedReport.id, 'resolved')"
-                >
+                <button v-if="selectedReport.status !== 'resolved'" class="btn btn-success"
+                  @click="updateReportStatus(selectedReport.id, 'resolved')">
                   ✅ Resolve Report
                 </button>
                 <button class="btn btn-error">
@@ -439,13 +422,14 @@ onUnmounted(() => {
     display: flex;
     align-items: center;
     gap: 1rem;
-    padding: 1.5rem;
+    padding: 1.25rem 1.5rem;
     border-radius: var(--radius-lg);
     background: var(--bg-surface);
     box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
 
     .status-icon {
-      font-size: 1.5rem;
+      font-size: 1.25rem;
     }
 
     .status-info {
@@ -464,9 +448,15 @@ onUnmounted(() => {
   }
 }
 
+.toolbar {
+  border: 1px solid var(--border-color);
+  padding: 1rem;
+  border-radius: var(--radius-lg);
+}
+
 .filters {
   .search-input {
-    width: 300px;
+    width: 100%;
     padding: 0.75rem 1rem;
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
@@ -494,6 +484,36 @@ onUnmounted(() => {
   }
 }
 
+.toolbar-row {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.toolbar-controls {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.input-with-icon {
+  position: relative;
+  flex: 1 1 360px;
+}
+
+.leading-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.7;
+}
+
+.input-with-icon .search-input {
+  padding-left: 2.25rem;
+}
+
 .report-card {
   cursor: pointer;
   transition: var(--transition-fast);
@@ -502,6 +522,18 @@ onUnmounted(() => {
     transform: translateY(-2px);
     box-shadow: var(--shadow-lg);
   }
+}
+
+.report-card.is-open {
+  border-top: 3px solid var(--warning-color);
+}
+
+.report-card.is-in_progress {
+  border-top: 3px solid var(--primary-color);
+}
+
+.report-card.is-resolved {
+  border-top: 3px solid var(--success-color);
 }
 
 .report-header {
@@ -545,6 +577,11 @@ onUnmounted(() => {
     border-radius: var(--radius-sm);
     font-size: 0.75rem;
   }
+}
+
+.chip {
+  border: 1px solid var(--border-color);
+  background: linear-gradient(135deg, var(--bg-secondary), var(--bg-surface));
 }
 
 .report-content {
@@ -661,6 +698,7 @@ onUnmounted(() => {
   width: 90%;
   max-height: 80vh;
   overflow-y: auto;
+  border: 1px solid var(--border-color);
 }
 
 .modal-header {
@@ -739,8 +777,13 @@ onUnmounted(() => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 // Responsive adjustments
@@ -774,4 +817,3 @@ onUnmounted(() => {
   }
 }
 </style>
-

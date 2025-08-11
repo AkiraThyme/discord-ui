@@ -185,11 +185,13 @@ function handleWebSocketMessage(data) {
   switch (data.type) {
     case 'presence_update':
       // Update member status in real-time
-      { const member = members.value.find(m => m.id === parseInt(data.user_id))
-      if (member) {
-        member.status = data.status
+      {
+        const member = members.value.find(m => m.id === parseInt(data.user_id))
+        if (member) {
+          member.status = data.status
+        }
+        break
       }
-      break }
     default:
       console.log('Unknown WebSocket message type:', data.type)
   }
@@ -416,12 +418,7 @@ onUnmounted(() => {
     <!-- Server Selection -->
     <div v-if="servers.length > 0" class="server-selector card mb-4">
       <label for="server-select" class="server-label">Select Server:</label>
-      <select
-        id="server-select"
-        v-model="selectedServer"
-        @change="handleServerChange"
-        class="server-select"
-      >
+      <select id="server-select" v-model="selectedServer" @change="handleServerChange" class="server-select">
         <option v-for="server in servers" :key="server.id" :value="server">
           {{ server.name }}
         </option>
@@ -491,24 +488,23 @@ onUnmounted(() => {
     </div>
 
     <!-- Filters -->
-    <div v-if="hasData" class="filters card mb-4">
-      <div class="flex items-center gap-4">
-        <div class="search-box">
-          <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="Search members..."
-            class="search-input"
-          />
+    <div v-if="hasData" class="filters toolbar glass mb-4">
+      <div class="toolbar-row">
+        <div class="search-box input-with-icon">
+          <span class="leading-icon">🔎</span>
+          <input v-model="searchQuery" type="text" placeholder="Search by name, nickname, or ID..."
+            class="search-input" />
         </div>
-        <div class="status-filter">
-          <select v-model="statusFilter" class="filter-select">
-            <option value="all">All Status</option>
-            <option value="online">Online</option>
-            <option value="idle">Idle</option>
-            <option value="dnd">Do Not Disturb</option>
-            <option value="offline">Offline</option>
-          </select>
+        <div class="toolbar-controls">
+          <div class="status-filter">
+            <select v-model="statusFilter" class="filter-select">
+              <option value="all">All Status</option>
+              <option value="online">Online</option>
+              <option value="idle">Idle</option>
+              <option value="dnd">Do Not Disturb</option>
+              <option value="offline">Offline</option>
+            </select>
+          </div>
         </div>
       </div>
     </div>
@@ -516,8 +512,10 @@ onUnmounted(() => {
     <!-- Content Tabs -->
     <div v-if="hasData" class="content-tabs">
       <div class="tab-buttons">
-        <button class="tab-btn" :class="{ active: activeTab === 'members' }" @click="activeTab = 'members'">👥 All Members</button>
-        <button class="tab-btn" :class="{ active: activeTab === 'channels' }" @click="activeTab = 'channels'">📢 Channels</button>
+        <button class="tab-btn" :class="{ active: activeTab === 'members' }" @click="activeTab = 'members'">👥 All
+          Members</button>
+        <button class="tab-btn" :class="{ active: activeTab === 'channels' }" @click="activeTab = 'channels'">📢
+          Channels</button>
       </div>
     </div>
 
@@ -555,18 +553,11 @@ onUnmounted(() => {
       </div>
 
       <div v-else class="members-grid grid grid-3">
-        <div
-          v-for="member in filteredMembers"
-          :key="member.id"
-          class="member-card card"
-        >
+        <div v-for="member in filteredMembers" :key="member.id" class="member-card card glass">
           <div class="member-header">
             <div class="member-avatar">
-              <img
-                :src="member.avatar_url || '/default-avatar.png'"
-                :alt="member.name"
-                @error="$event.target.src = '/default-avatar.png'"
-              />
+              <img :src="member.avatar_url || '/default-avatar.png'" :alt="member.name"
+                @error="$event.target.src = '/default-avatar.png'" />
               <span class="status-indicator" :class="`status-${member.status}`"></span>
             </div>
             <div class="member-info">
@@ -592,10 +583,7 @@ onUnmounted(() => {
           </div>
 
           <div class="member-actions">
-            <button
-              class="btn btn-secondary btn-sm"
-              @click="viewMemberHistory(member)"
-            >
+            <button class="btn btn-secondary btn-sm" @click="viewMemberHistory(member)">
               📊 History
             </button>
             <button class="btn btn-warning btn-sm" @click="warnMember(member)">
@@ -613,12 +601,8 @@ onUnmounted(() => {
     <div v-if="activeTab === 'channels' && channels.length > 0" class="channels-section mt-4">
       <h2 class="section-title">Discord Channels</h2>
       <div class="channels-grid">
-        <div
-          v-for="channel in channels"
-          :key="channel.id"
-          class="channel-card card"
-          @click="viewChannelDetails(channel)"
-        >
+        <div v-for="channel in channels" :key="channel.id" class="channel-card card"
+          @click="viewChannelDetails(channel)">
           <div class="channel-header">
             <div class="channel-icon">
               {{ getChannelIcon(channel.type) }}
@@ -643,7 +627,9 @@ onUnmounted(() => {
             <div class="progress-bar">
               <div class="progress-fill" style="width: 0%"></div>
             </div>
-            <span class="progress-text">{{ channel.type === 'category' ? 'Category - Click to view info' : 'Click to view details' }}</span>
+            <span class="progress-text">
+              {{ channel.type === 'category' ? 'Category - Click to view info' : 'Click to view details' }}
+            </span>
           </div>
         </div>
       </div>
@@ -693,11 +679,7 @@ onUnmounted(() => {
             </div>
 
             <div v-else class="activity-list">
-              <div
-                v-for="activity in memberActivity"
-                :key="activity.id"
-                class="activity-item"
-              >
+              <div v-for="activity in memberActivity" :key="activity.id" class="activity-item">
                 <div class="activity-icon">
                   {{ getActivityIcon(activity.action) }}
                 </div>
@@ -769,7 +751,8 @@ onUnmounted(() => {
                 <div class="activity-icon">{{ getActivityIcon(activity.action) }}</div>
                 <div class="activity-content">
                   <div class="activity-user">{{ activity.username }}</div>
-                  <div class="activity-description">{{ getActivityDescription(activity.action, activity.details) }}</div>
+                  <div class="activity-description">{{ getActivityDescription(activity.action, activity.details) }}
+                  </div>
                   <div class="activity-time">{{ formatLastSeen(activity.created_at) }}</div>
                 </div>
               </div>
@@ -779,7 +762,8 @@ onUnmounted(() => {
           <!-- Category Info -->
           <div v-if="selectedChannel?.type === 'category'" class="category-info">
             <h3>Category Information</h3>
-            <p>This is a category channel that organizes other channels. Categories don't have members or activity directly.</p>
+            <p>This is a category channel that organizes other channels. Categories don't have members or activity
+              directly.</p>
             <p>To view member data, click on individual text or voice channels within this category.</p>
           </div>
 
@@ -951,7 +935,7 @@ onUnmounted(() => {
 
 .filters {
   .search-input {
-    width: 300px;
+    width: 100%;
     padding: 0.75rem 1rem;
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
@@ -976,6 +960,42 @@ onUnmounted(() => {
       border-color: var(--primary-color);
     }
   }
+}
+
+.toolbar {
+  border: 1px solid var(--border-color);
+  padding: 1rem;
+  border-radius: var(--radius-lg);
+}
+
+.toolbar-row {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.toolbar-controls {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.input-with-icon {
+  position: relative;
+  flex: 1 1 360px;
+}
+
+.leading-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.7;
+}
+
+.input-with-icon .search-input {
+  padding-left: 2.25rem;
 }
 
 .content-tabs {
@@ -1016,6 +1036,12 @@ onUnmounted(() => {
   background: var(--bg-surface);
   padding: 1.5rem;
   border-radius: var(--radius-lg);
+
+  border-top: 3px solid transparent;
+
+  &:hover {
+    border-top-color: var(--primary-color);
+  }
 
   &:hover {
     transform: translateY(-2px);
@@ -1497,10 +1523,21 @@ onUnmounted(() => {
         text-transform: uppercase;
         font-weight: 500;
 
-        &.online { color: var(--success-color); }
-        &.idle { color: var(--warning-color); }
-        &.dnd { color: var(--error-color); }
-        &.offline { color: var(--text-secondary); }
+        &.online {
+          color: var(--success-color);
+        }
+
+        &.idle {
+          color: var(--warning-color);
+        }
+
+        &.dnd {
+          color: var(--error-color);
+        }
+
+        &.offline {
+          color: var(--text-secondary);
+        }
       }
     }
   }
@@ -1688,8 +1725,13 @@ onUnmounted(() => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 // Responsive adjustments
@@ -1743,14 +1785,17 @@ onUnmounted(() => {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 2rem;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE 10+ */
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE 10+ */
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   padding: 1rem;
 }
-.members-grid::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
-}
 
+.members-grid::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari, Opera */
+}
 </style>
